@@ -1,21 +1,34 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { AppLoading } from "expo";
+import { Provider } from "react-redux";
+import * as Font from "expo-font";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import AppNavigator from "./navigation/AppNavigator";
+import store from "./redux/store";
+
+const fetchFonts = () => {
+  return Font.loadAsync({
+    "latin-light": require("./assets/fonts/Merriweather-Light.ttf"),
+    "latin-regular": require("./assets/fonts/Merriweather-Regular.ttf"),
+    "latin-bold": require("./assets/fonts/Merriweather-Bold.ttf"),
+    "othmanic": require("./assets/fonts/UthmanicHafs.otf"),
+    "arabic-light": require("./assets/fonts/Almarai-Light.ttf"),
+    "arabic-regular": require("./assets/fonts/Almarai-Regular.ttf"),
+    "arabic-bold": require("./assets/fonts/Almarai-Bold.ttf"),
+  })
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  const [fontLoaded, setFontLoaded] = useState(false);
+
+  if (!fontLoaded) {
+    return <AppLoading startAsync={fetchFonts} onFinish={() => setFontLoaded(true)} />
+  }
+  return (
+    <Provider store={store}>
+      <AppNavigator />
+      <StatusBar style="light" />
+    </Provider>
+  );
+}
